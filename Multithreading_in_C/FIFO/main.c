@@ -18,6 +18,7 @@ struct Process {
 struct Process *start = NULL;
 struct Process *end = NULL;
 struct Process *aux;
+int reference = 0;
 
 // Prototypes
 int menu();
@@ -25,6 +26,7 @@ void execute_fifo_scaling();
 void add_proccess();
 void show();
 void free_mem();
+void sort_fifo();
 
 int main(int argc, char *argv[]) {
   printf("Processor Scaling using FIFO (First in First Out)\n");
@@ -78,6 +80,7 @@ void add_proccess() {
   printf("Last, tell us the Execution Time: ");
   scanf("%d", &new_item->execution_time);
   printf("Proccess added succesfully\n");
+  reference++;
 }
 
 void show() {
@@ -114,6 +117,7 @@ void execute_fifo_scaling() {
   if (start == NULL) {
     printf("Couldn't find any proccess\n\n");
   } else {
+    sort_fifo();
     while (start != NULL) {
       printf("Executing...\n");
       printf("\nProccess name: %s\n", start->name);
@@ -128,6 +132,27 @@ void execute_fifo_scaling() {
         free(start);
         start = NULL;
         end = NULL;
+      }
+      reference--;
+    }
+  }
+}
+
+void sort_fifo() {
+  struct Process *prox, *tmp;
+  if (start != NULL) {
+    aux = start;
+    while (aux != NULL) {
+      prox = aux->next;
+      if (prox != NULL) {
+        if (aux->entry_time > prox->entry_time) {
+          tmp = aux;
+          aux = prox;
+          prox = tmp;
+        }
+        aux = aux->next;
+      } else {
+        break;
       }
     }
   }
