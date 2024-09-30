@@ -73,7 +73,7 @@ void add_proccess() {
   }
   printf("Insert the name of the Proccess: ");
   scanf("%s", new_item->name);
-  printf("Now tell the Entry time of %s", new_item->name);
+  printf("Now tell the Entry time of %s: ", new_item->name);
   scanf("%d", &new_item->entry_time);
   printf("Last, tell us the Execution Time: ");
   scanf("%d", &new_item->execution_time);
@@ -114,23 +114,21 @@ void execute_fifo_scaling() {
   if (start == NULL) {
     printf("Couldn't find any proccess\n\n");
   } else {
-    aux = start;
-    while (aux != NULL) {
-      printf("\nProccess name: %s\n", aux->name);
-      printf("Entry Time: %d\n", aux->entry_time);
-      printf("Proccess Time: %d\n", aux->execution_time);
-      sleep(aux->execution_time);
-      if (aux->next != NULL) {
-        aux = aux->next;
+    while (start != NULL) {
+      printf("Executing...\n");
+      printf("\nProccess name: %s\n", start->name);
+      printf("Entry Time: %d\n", start->entry_time);
+      printf("Proccess Time: %d\n", start->execution_time);
+      sleep(start->execution_time);
+      if (start->next != NULL) {
+        aux = start->next;
         free(start);
         start = aux;
       } else {
-        free(aux);
+        free(start);
         start = NULL;
         end = NULL;
-        break;
       }
-      aux = aux->next;
     }
   }
 }
