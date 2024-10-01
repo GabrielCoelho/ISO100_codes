@@ -67,7 +67,7 @@ fn list_proccesses(p: &Vec<Proccess>) {
             );
         }
     } else {
-        println!("There is no proccess to execute");
+        println!("There is no proccess to show");
     }
 }
 
@@ -87,7 +87,6 @@ fn execute_proccesses(p: &mut Vec<Proccess>) {
     let mut _popped_proc: Option<Proccess>;
 
     sjf_sort(&mut *p);
-    list_proccesses(&p);
 
     for proccess in &mut *p {
         proccess.turnaround_time = response + proccess.execution_time;
@@ -98,6 +97,7 @@ fn execute_proccesses(p: &mut Vec<Proccess>) {
         response += proccess.execution_time;
     }
 
+    list_proccesses(&p);
     println!(
         "Await: {}\tResponse: {}\n",
         _medium_await_time, _medium_return_time
