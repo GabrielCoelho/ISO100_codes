@@ -27,6 +27,7 @@ void add_proccess();
 void show();
 void free_mem();
 void sort_fifo();
+void swap_pointers(struct Process *a, struct Process *b);
 
 int main(int argc, char *argv[]) {
   printf("Processor Scaling using FIFO (First in First Out)\n");
@@ -139,21 +140,27 @@ void execute_fifo_scaling() {
 }
 
 void sort_fifo() {
-  struct Process *prox, *tmp;
+  struct Process *prox;
   if (start != NULL) {
     aux = start;
     while (aux != NULL) {
       prox = aux->next;
       if (prox != NULL) {
         if (aux->entry_time > prox->entry_time) {
-          tmp = aux;
-          aux = prox;
-          prox = tmp;
+          swap_pointers(aux, prox);
+          aux = aux->next;
+        } else {
+          aux = aux->next;
         }
-        aux = aux->next;
       } else {
         break;
       }
     }
   }
+}
+
+void swap_pointers(struct Process *a, struct Process *b) {
+  struct Process tmp = *a;
+  *a = *b;
+  *b = tmp;
 }
