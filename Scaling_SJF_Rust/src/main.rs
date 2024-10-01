@@ -43,6 +43,19 @@ fn main() {
         }
     }
     list_proccesses(&proc);
+
+    println!(
+        "Await: {}\tResponse: {}\n",
+        _medium_await_time, _medium_return_time
+    );
+    println!(
+        "Medium Return Time: {:.4}",
+        (_medium_return_time as f32 / (proc.len()) as f32) as f32
+    );
+    println!(
+        "Medium Await Time: {:.4}",
+        (_medium_await_time as f32 / (proc.len()) as f32) as f32
+    );
 }
 
 fn add_proccess(p: &mut Vec<Proccess>) {
