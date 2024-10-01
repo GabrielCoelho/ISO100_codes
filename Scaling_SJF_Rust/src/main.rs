@@ -22,7 +22,13 @@ fn main() {
         }
     }
 
-    for val in proc {
+    for val in &proc {
+        println!("{}\n{}\n{}\n", val.name, val.entry_time, val.execution_time);
+    }
+
+    proc.sort_by(|a, b| a.execution_time.cmp(&b.execution_time));
+
+    for val in &proc {
         println!("{}\n{}\n{}\n", val.name, val.entry_time, val.execution_time);
     }
 }
