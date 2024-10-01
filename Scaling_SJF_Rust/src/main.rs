@@ -5,7 +5,6 @@ use std::io;
 use queue::*;
 use random_string::generate;
 
-#[derive(Debug)]
 enum MENU {
     _OptDesselect = 0,
     OptAdd = 1,
