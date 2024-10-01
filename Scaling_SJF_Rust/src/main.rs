@@ -4,8 +4,6 @@ use queue::*;
 use random_string::generate;
 
 fn main() {
-    let mut _total_exec_time: i32;
-    let mut _total_await_time: i32;
     let mut i = 0;
     let mut proc: Vec<Proccess> = Vec::new();
     println!("SJF Scaling in Rust");
@@ -25,6 +23,25 @@ fn main() {
     entry_time_sort(&mut proc);
     sjf_sort(&mut proc);
 
+    // "executing the proccesses"
+    let mut response: u32 = 0;
+    let mut waiting: u32 = 0;
+    let mut _medium_return_time: u32 = 0;
+    let mut _medium_await_time: u32 = 0;
+    i = 0;
+
+    loop {
+        proc[i].turnaround_time = response + proc[i].execution_time;
+        proc[i].await_time = waiting;
+        _medium_await_time += proc[i].await_time;
+        _medium_return_time += proc[i].turnaround_time;
+        waiting += proc[i].execution_time;
+        response += proc[i].execution_time;
+        i += 1;
+        if i == 3 {
+            break;
+        }
+    }
     list_proccesses(&proc);
 }
 
@@ -37,11 +54,11 @@ fn add_proccess(p: &mut Vec<Proccess>) {
 }
 
 fn list_proccesses(p: &Vec<Proccess>) {
-    println!("Process Name\tEntry Time\tProccess Time\n");
+    println!("Process Name\tEntry Time\tProccess Time\tAwait Time\tTurnaround Time\n");
     for val in p {
         println!(
-            "{}\t{: >10}\t{: >10}\n",
-            val.name, val.entry_time, val.execution_time
+            "{}\t{: >10}\t{: >10}\t{: >10}\t{: >10}\n",
+            val.name, val.entry_time, val.execution_time, val.await_time, val.turnaround_time
         );
     }
 }

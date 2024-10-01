@@ -2,7 +2,7 @@ pub struct Proccess {
     pub name: String,
     pub entry_time: u8,
     pub execution_time: u32,
-    pub await_time: f32,
+    pub await_time: u32,
     pub turnaround_time: u32,
 }
 
