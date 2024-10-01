@@ -4,8 +4,8 @@ use queue::*;
 use random_string::generate;
 
 fn main() {
-    let mut total_exec_time: i32;
-    let mut total_await_time: i32;
+    let mut _total_exec_time: i32;
+    let mut _total_await_time: i32;
     let mut i = 0;
     let mut proc: Vec<Proccess> = Vec::new();
     println!("SJF Scaling in Rust");
@@ -22,7 +22,8 @@ fn main() {
         println!("{}\n{}\n{}\n", val.name, val.entry_time, val.execution_time);
     }
 
-    proc.sort_by(|a, b| a.execution_time.cmp(&b.execution_time));
+    entry_time_sort(&mut proc);
+    sjf_sort(&mut proc);
 
     list_proccesses(&proc);
 }
@@ -36,10 +37,19 @@ fn add_proccess(p: &mut Vec<Proccess>) {
 }
 
 fn list_proccesses(p: &Vec<Proccess>) {
+    println!("Process Name\tEntry Time\tProccess Time\n");
     for val in p {
         println!(
-            "Process Name: {}\nEntry Time: {}\n Time Proccessing: {}\n",
+            "{}\t{: >10}\t{: >10}\n",
             val.name, val.entry_time, val.execution_time
         );
     }
+}
+
+fn sjf_sort(p: &mut Vec<Proccess>) {
+    p.sort_by(|a, b| a.execution_time.cmp(&b.execution_time));
+}
+
+fn entry_time_sort(p: &mut Vec<Proccess>) {
+    p.sort_by(|a, b| a.entry_time.cmp(&b.entry_time));
 }
