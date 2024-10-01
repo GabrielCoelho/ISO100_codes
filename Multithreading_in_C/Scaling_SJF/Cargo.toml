@@ -1,0 +1,6 @@
+[package]
+name = "Scaling_SJF"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
