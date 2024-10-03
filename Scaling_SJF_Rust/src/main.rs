@@ -48,10 +48,14 @@ fn menu() -> u8 {
 }
 
 fn add_proccess(p: &mut Vec<Proccess>) {
+    println!("Insert a number to be the Entry Time of the proccess: ");
+    let pentry = get_number();
+    println!("Now insert the Execution time: ");
+    let pexecute = get_number();
     p.push(Proccess::new(
         generate(5, random_string::charsets::ALPHA_LOWER),
-        fastrand::u8(0..20),
-        fastrand::u32(1..10),
+        pentry,
+        pexecute,
     ));
     entry_time_sort(p);
 }
@@ -112,4 +116,12 @@ fn execute_proccesses(p: &mut Vec<Proccess>) {
     while !p.is_empty() {
         _popped_proc = p.pop();
     }
+}
+
+fn get_number() -> u32 {
+    let mut num: String = String::new();
+    io::stdin().read_line(&mut num).unwrap();
+    let num: u32 = num.trim().parse().expect("Error while parsing");
+
+    num
 }
