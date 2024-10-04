@@ -1,6 +1,6 @@
 // Copyright (c) 2024 Gabriel Coelho Soares. All Rights Reserved.
 mod queue;
-use std::io;
+use std::{env::temp_dir, io};
 
 use queue::*;
 use random_string::generate;
@@ -82,46 +82,66 @@ fn entry_time_sort(p: &mut Vec<Proccess>) {
     p.sort_by(|a, b| a.entry_time.cmp(&b.entry_time));
 }
 
+fn entry_time_sort_ret(p: &mut Vec<Proccess>) -> &Proccess {
+    p.sort_by(|a, b| a.entry_time.cmp(&b.entry_time));
+    &p[0]
+}
+
 fn execute_proccesses(p: &mut Vec<Proccess>) {
-    let mut response: u32 = 0;
-    let mut waiting: u32 = 0;
-    let mut _medium_return_time: u32 = 0;
-    let mut _medium_await_time: u32 = 0;
+    let mut _response: u32 = 0;
+    let mut waiting: i32 = 0;
+    let mut medium_return_time: i32 = 0;
+    let mut medium_await_time: i32 = 0;
     let mut _popped_proc: Option<Proccess>;
+    let mut total_time: i32 = 0;
+    let mut i = 0;
 
     sjf_sort(&mut *p);
 
     for proccess in &mut *p {
-        proccess.turnaround_time = response + proccess.execution_time;
+        if total_time != 0 && total_time < proccess.entry_time {
+            // Sort via entry_time
+        }
+        total_time += proccess.execution_time;
+        proccess.turnaround_time = total_time - proccess.entry_time;
+        waiting += total_time - proccess.execution_time - proccess.entry_time;
         proccess.await_time = waiting;
-        _medium_await_time += proccess.await_time;
-        _medium_return_time += proccess.turnaround_time;
-        waiting += proccess.execution_time;
-        response += proccess.execution_time;
+    }
+
+    println!("{total_time}");
+
+    loop {
+        medium_return_time += p[i].turnaround_time;
+        medium_await_time += p[i].await_time;
+
+        i += 1;
+        if i == p.len() {
+            break;
+        }
     }
 
     list_proccesses(&p);
     println!(
         "Await: {}\tResponse: {}\n",
-        _medium_await_time, _medium_return_time
+        medium_await_time, medium_return_time
     );
     println!(
         "Medium Return Time: {:.4}",
-        (_medium_return_time as f32 / (p.len()) as f32) as f32
+        (medium_return_time as f32 / (p.len()) as f32) as f32
     );
     println!(
         "Medium Await Time: {:.4}",
-        (_medium_await_time as f32 / (p.len()) as f32) as f32
+        (medium_await_time as f32 / (p.len()) as f32) as f32
     );
     while !p.is_empty() {
         _popped_proc = p.pop();
     }
 }
 
-fn get_number() -> u32 {
+fn get_number() -> i32 {
     let mut num: String = String::new();
     io::stdin().read_line(&mut num).unwrap();
-    let num: u32 = num.trim().parse().expect("Error while parsing");
+    let num: i32 = num.trim().parse().expect("Error while parsing");
 
     num
 }

@@ -1,13 +1,13 @@
 pub struct Proccess {
     pub name: String,
-    pub entry_time: u32,
-    pub execution_time: u32,
-    pub await_time: u32,
-    pub turnaround_time: u32,
+    pub entry_time: i32,
+    pub execution_time: i32,
+    pub await_time: i32,
+    pub turnaround_time: i32,
 }
 
 impl Proccess {
-    pub fn new(p_name: String, p_entime: u32, p_exect: u32) -> Self {
+    pub fn new(p_name: String, p_entime: i32, p_exect: i32) -> Self {
         Proccess {
             name: p_name,
             entry_time: p_entime,
