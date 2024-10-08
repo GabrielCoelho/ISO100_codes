@@ -1,7 +1,7 @@
 // Copyright (c) 2024 Gabriel Coelho Soares. All Rights Reserved.
 pub mod proccess;
-mod round_robin;
-mod sjf;
+pub mod round_robin;
+pub mod sjf;
 use std::io;
 
 /// Função principal
