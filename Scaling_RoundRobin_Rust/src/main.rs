@@ -109,7 +109,6 @@ fn execute_proccesses(p: &mut Vec<Proccess>) {
     let mut i: usize = 0;
     let quantum: i32 = 2;
     let mut count = 0;
-    let mut total_time: i32 = p[i].entry_time;
 
     let mut clone = p.clone();
 
@@ -118,7 +117,7 @@ fn execute_proccesses(p: &mut Vec<Proccess>) {
     }
 
     while count != 0 {
-        println!("{count} times //  {total_time} \n");
+        println!("{count} times //  {response} \n");
         println!("Process Name\tEntry Time\tProccess Time\tAwait Time\tTurnaround Time\n");
         for val in &clone {
             println!(
@@ -126,7 +125,7 @@ fn execute_proccesses(p: &mut Vec<Proccess>) {
                 val.name, val.entry_time, val.execution_time, val.await_time, val.turnaround_time
             );
         }
-        if total_time >= clone[i].entry_time && !clone[i].proccessed {
+        if response >= clone[i].entry_time && !clone[i].proccessed {
             if clone[i].execution_time >= quantum {
                 clone[i].execution_time -= quantum;
                 clone[i].turnaround_time = response + quantum;
@@ -138,9 +137,8 @@ fn execute_proccesses(p: &mut Vec<Proccess>) {
                 count -= 1;
                 response += 1;
             }
-            total_time += response;
             if clone[i].execution_time == 0 {
-                clone[i].await_time = total_time - clone[i].entry_time - p[i].execution_time;
+                clone[i].await_time = response - clone[i].entry_time - p[i].execution_time;
                 clone[i].proccessed = true;
             }
         }
