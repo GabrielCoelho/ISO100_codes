@@ -4,7 +4,10 @@ mod round_robin;
 mod sjf;
 use std::io;
 
-fn main() {
+/// Função principal
+///
+/// Chama as outras funções de acordo com o item escolhido no menu
+pub fn main() {
     loop {
         println!("SJF and Round Robin Scaling\n\n1. SJF\t2. Round Robin\n3. Exit");
         let mut num: String = String::new();

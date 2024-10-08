@@ -11,7 +11,9 @@ enum MENU {
     OptExit = 4,
 }
 
-// main
+/// Funçao principal Round Robin
+///
+/// Realiza o loop de acordo com o menu, chamando as funções conforme necessário.
 pub fn main_rrobin() {
     let mut proc: Vec<Proccess> = Vec::new();
     let mut option: u8 = 0;
@@ -31,7 +33,8 @@ pub fn main_rrobin() {
     }
 }
 
-fn menu() -> u8 {
+/// Função do menu que retornará um inteiro sem sinal de 8 bits.
+pub fn menu() -> u8 {
     let mut op = String::new();
     println!(
         "Choose an option\n{} - Add a Proccess\t{: >9} - List all proccesses\n{} - Execute all proccesses \t{} - Exit program\n\n",
@@ -46,7 +49,15 @@ fn menu() -> u8 {
     op
 }
 
-fn add_proccess(p: &mut Vec<Proccess>) {
+/// Função para adicionar o processo
+///
+/// Recebe o endereço do vetor de processos e insere as informações dadas pelo usuário através da
+/// função `push()` do vetor.
+///
+/// Ao fim de cada inserção, chama a função para ordenar por tempo de entrada.
+///
+/// * p: Endereço mutável de um vetor de Processos
+pub fn add_proccess(p: &mut Vec<Proccess>) {
     println!("Insert a number to be the Entry Time of the proccess: ");
     let pentry = get_number();
     println!("Now insert the Execution time: ");
@@ -59,7 +70,16 @@ fn add_proccess(p: &mut Vec<Proccess>) {
     entry_time_sort(p);
 }
 
-fn list_proccesses(p: &Vec<Proccess>) {
+/// Listar os processos adicionados
+///
+/// Caso o vetor recebido através do parâmetro `p` não esteja vazio, exibe na tela o nome do
+/// processo, seu tempo de entrada, tempo de execução, tempo de espera e tempo de turnaround.
+///
+/// Obs: Os dois últimos tempos (Espera e Turnaround) só serão inicializados a partir da execução
+/// dos processos.
+///
+/// * p: Endereço de um vetor de Processos
+pub fn list_proccesses(p: &Vec<Proccess>) {
     if !p.is_empty() {
         println!("Process Name\tEntry Time\tProccess Time\tAwait Time\tTurnaround Time\n");
         for val in p {
@@ -73,11 +93,39 @@ fn list_proccesses(p: &Vec<Proccess>) {
     }
 }
 
-fn entry_time_sort(p: &mut Vec<Proccess>) {
+/// Ordenar pelo tempo de entrada
+///
+/// Ordena o vetor pelo tempo de entrada de cada item contido nele.
+///
+/// * p: Endereço mutável de um vetor de Processos
+/// * sort_by(|a, b|): Ordena através de uma verificação de dois itens do vetor sequenciais (a ->
+/// b) onde o valor do tempo de entrada de a comparado ao tempo de entrada de b sejam do menor
+/// para o maior.
+///
+/// Note: nós passamos o endereço de b na comparação pois, no momento da execução do programa, não temos como
+/// saber o valor em si de b, mas sim de a (que é o primeiro valor a ser checado). Basicamente,
+/// realiza um `bubble_sort` a partir da variável em questão.
+pub fn entry_time_sort(p: &mut Vec<Proccess>) {
     p.sort_by(|a, b| a.entry_time.cmp(&b.entry_time));
 }
 
-fn execute_proccesses(p: &mut Vec<Proccess>) {
+/// Executar os processos
+///
+/// Executa os processos a partir de um `quantum` de tempo (2 unidades de tempo) para ir retirando
+/// da execução dos processos. Sendo preemptivo, ele sempre ordenará o valor de entrada do menor
+/// para o maior, e checando se o tempo de execução de todos os processos já superou o tempo de
+/// entrada do próximo processo.
+///
+/// * p: Endereço mutável de um vetor de Processos
+/// * medium_return_time: Tempo Médio de Retorno
+/// * medium_await_time: Tempo Médio de Espera
+/// * _popped_proc: Processo que foi removido #variável não utilizada#
+/// * response: tempo total de todos os processos
+/// * proccess_cl_push: Variável que mantém o controle de quantos processos já foram clonados
+/// * check_proccessed: Variável que mantém o controle de quantos processos já foram executados
+/// * clone: Vetor de Processos clone do vetor principal.
+/// * count: Valor máximo de tempo de execução
+pub fn execute_proccesses(p: &mut Vec<Proccess>) {
     let mut response: i32 = 0;
     let mut _medium_return_time: i32 = 0;
     let mut _medium_await_time: i32 = 0;
@@ -87,7 +135,6 @@ fn execute_proccesses(p: &mut Vec<Proccess>) {
     let mut count = 0;
     let mut proccess_cl_push: usize = 1;
     let mut check_proccessed = 0;
-    let mut exitloop = 0;
 
     let mut clone: Vec<Proccess> = Vec::new();
     clone.push(p[i].clone());
@@ -96,7 +143,7 @@ fn execute_proccesses(p: &mut Vec<Proccess>) {
         count += i.execution_time;
     }
 
-    while count != 0 || proccess_cl_push == 5 {
+    while count != 0 || check_proccessed == p.len() {
         if !clone[0].proccessed {
             if clone[0].execution_time >= quantum {
                 clone[0].execution_time -= quantum;
@@ -128,14 +175,8 @@ fn execute_proccesses(p: &mut Vec<Proccess>) {
             }
         }
         clone.rotate_left(1);
-        exitloop += 1;
-        if check_proccessed == p.len() || exitloop == 30 {
-            break;
-        }
     }
     entry_time_sort(&mut clone);
-
-    i = 0;
     loop {
         _medium_return_time += clone[i].turnaround_time;
         p[i].turnaround_time = clone[i].turnaround_time;
@@ -166,7 +207,13 @@ fn execute_proccesses(p: &mut Vec<Proccess>) {
     }
 }
 
-fn get_number() -> i32 {
+/// Armazenar número do input
+///
+/// Retorna um valor inteiro de 32bits a partir do valor inserido pelo usuário. A princípio começa
+/// como String, e mudamos o valor para inteiro.
+///
+/// * num: String -> i32 via .parse();
+pub fn get_number() -> i32 {
     let mut num: String = String::new();
     io::stdin()
         .read_line(&mut num)

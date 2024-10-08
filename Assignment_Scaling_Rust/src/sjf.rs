@@ -13,7 +13,9 @@ enum MENU {
     OptExit = 4,
 }
 
-/// Função principal
+/// Função SJF
+///
+/// Realiza o loop de acordo com o menu, chamando as funções conforme necessário.
 pub fn main_sjf() {
     // Criação do Vetor de Processos e inicializando o vetor.
     let mut proc: Vec<Proccess> = Vec::new();
@@ -37,7 +39,7 @@ pub fn main_sjf() {
 }
 
 /// Função do menu que retornará um inteiro sem sinal de 8 bits.
-fn menu() -> u8 {
+pub fn menu() -> u8 {
     // Criação de uma variável do tipo String.
     let mut op = String::new();
     println!(
@@ -64,7 +66,7 @@ fn menu() -> u8 {
 /// Ao fim de cada inserção, chama a função para ordenar por tempo de entrada.
 ///
 /// * p: Endereço mutável de um vetor de Processos
-fn add_proccess(p: &mut Vec<Proccess>) {
+pub fn add_proccess(p: &mut Vec<Proccess>) {
     println!("Insert a number to be the Entry Time of the proccess: ");
     let pentry = get_number();
     println!("Now insert the Execution time: ");
@@ -87,7 +89,7 @@ fn add_proccess(p: &mut Vec<Proccess>) {
 /// dos processos.
 ///
 /// * p: Endereço de um vetor de Processos
-fn list_proccesses(p: &Vec<Proccess>) {
+pub fn list_proccesses(p: &Vec<Proccess>) {
     if !p.is_empty() {
         println!("Process Name\tEntry Time\tProccess Time\tAwait Time\tTurnaround Time\n");
         for val in p {
@@ -110,17 +112,17 @@ fn list_proccesses(p: &Vec<Proccess>) {
 /// b) onde o valor do tempo de execução de a comparado ao tempo de execução de b sejam do menor
 /// para o maior.
 ///
-/// Note: nós passamos o endereço de b na comparação pois, no momento da execução, não temos como
+/// Note: nós passamos o endereço de b na comparação pois, no momento da execução do programa, não temos como
 /// saber o valor em si de b, mas sim de a (que é o primeiro valor a ser checado). Basicamente,
 /// realiza um `bubble_sort` a partir da variável em questão.
-fn sjf_sort(p: &mut Vec<Proccess>) {
+pub fn sjf_sort(p: &mut Vec<Proccess>) {
     p.sort_by(|a, b| a.execution_time.cmp(&b.execution_time));
 }
 
 /// Ordenar pelo menor tempo de entrada
 ///
 /// * p: Endereço mutável de um vetor de Processos
-fn entry_time_sort(p: &mut Vec<Proccess>) {
+pub fn entry_time_sort(p: &mut Vec<Proccess>) {
     p.sort_by(|a, b| a.entry_time.cmp(&b.entry_time));
 }
 
@@ -136,7 +138,7 @@ fn entry_time_sort(p: &mut Vec<Proccess>) {
 /// * medium_await_time: Tempo Médio de Espera
 /// * _popped_proc: Processo que foi removido #variável não utilizada#
 /// * total_time: Tempo total decorrido durante a execução em `u.t.`
-fn execute_proccesses(p: &mut Vec<Proccess>) {
+pub fn execute_proccesses(p: &mut Vec<Proccess>) {
     let mut medium_return_time: i32 = 0;
     let mut medium_await_time: i32 = 0;
     let mut _popped_proc: Option<Proccess>;
@@ -195,7 +197,7 @@ fn execute_proccesses(p: &mut Vec<Proccess>) {
 /// como String, e mudamos o valor para inteiro.
 ///
 /// * num: String -> i32 via .parse();
-fn get_number() -> i32 {
+pub fn get_number() -> i32 {
     let mut num: String = String::new();
     io::stdin()
         .read_line(&mut num)

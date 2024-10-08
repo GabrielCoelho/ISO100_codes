@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["MENU"],"fn":["add_proccess","entry_time_sort","execute_proccesses","get_number","list_proccesses","main_sjf","menu","sjf_sort"]};

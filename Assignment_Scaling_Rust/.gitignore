@@ -1,1 +1,4 @@
-target/*
+target/debug
+target/.rust_info.json
+target/.rustdoc_fingerprint.json 
+target/CACHEDIR.TAG

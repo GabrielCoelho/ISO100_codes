@@ -1,0 +1,1 @@
+window.ALL_CRATES = ["OS_Scaling_onRust","fastrand","random_string"];
