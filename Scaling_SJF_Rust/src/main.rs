@@ -1,6 +1,6 @@
 // Copyright (c) 2024 Gabriel Coelho Soares. All Rights Reserved.
 mod queue;
-use std::{env::temp_dir, io};
+use std::{env::temp_dir, io, os::unix::process};
 
 use queue::*;
 use random_string::generate;
@@ -88,33 +88,37 @@ fn entry_time_sort_ret(p: &mut Vec<Proccess>) -> &Proccess {
 }
 
 fn execute_proccesses(p: &mut Vec<Proccess>) {
-    let mut _response: u32 = 0;
-    let mut waiting: i32 = 0;
     let mut medium_return_time: i32 = 0;
     let mut medium_await_time: i32 = 0;
     let mut _popped_proc: Option<Proccess>;
-    let mut total_time: i32 = 0;
+    let mut total_time: i32;
     let mut i = 0;
 
     sjf_sort(&mut *p);
-
-    for proccess in &mut *p {
-        if total_time != 0 && total_time < proccess.entry_time {
-            // Sort via entry_time
-        }
-        total_time += proccess.execution_time;
-        proccess.turnaround_time = total_time - proccess.entry_time;
-        waiting += total_time - proccess.execution_time - proccess.entry_time;
-        proccess.await_time = waiting;
-    }
-
-    println!("{total_time}");
-
+    total_time = p[i].entry_time;
     loop {
-        medium_return_time += p[i].turnaround_time;
-        medium_await_time += p[i].await_time;
+        let mut j = i + 1;
+        println!("{total_time}");
+        if j < p.len() {
+            if p[i].entry_time > p[j].entry_time
+                && total_time < p[i].entry_time
+                && total_time >= p[j].entry_time
+            {
+                j = i;
+                i = i + 1;
+            }
+        }
+        if !p[i].proccessed {
+            println!("Proccessing: {} // {}", p[i].name, p[i].execution_time);
+            total_time += p[i].execution_time;
+            p[i].turnaround_time = total_time - p[i].entry_time;
+            p[i].await_time = total_time - p[i].execution_time - p[i].entry_time;
 
-        i += 1;
+            medium_return_time += p[i].turnaround_time;
+            medium_await_time += p[i].await_time;
+            p[i].proccessed = true;
+        }
+        i = j;
         if i == p.len() {
             break;
         }
@@ -140,7 +144,9 @@ fn execute_proccesses(p: &mut Vec<Proccess>) {
 
 fn get_number() -> i32 {
     let mut num: String = String::new();
-    io::stdin().read_line(&mut num).unwrap();
+    io::stdin()
+        .read_line(&mut num)
+        .expect("Couldn't read any number");
     let num: i32 = num.trim().parse().expect("Error while parsing");
 
     num

@@ -4,6 +4,7 @@ pub struct Proccess {
     pub execution_time: i32,
     pub await_time: i32,
     pub turnaround_time: i32,
+    pub proccessed: bool,
 }
 
 impl Proccess {
@@ -14,6 +15,7 @@ impl Proccess {
             execution_time: p_exect,
             await_time: 0,
             turnaround_time: 0,
+            proccessed: false,
         }
     }
 }
