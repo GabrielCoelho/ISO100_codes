@@ -102,61 +102,83 @@ fn entry_time_sort(p: &mut Vec<Proccess>) {
 
 fn execute_proccesses(p: &mut Vec<Proccess>) {
     let mut response: i32 = 0;
-    let mut waiting: i32 = 0;
     let mut _medium_return_time: i32 = 0;
     let mut _medium_await_time: i32 = 0;
     let mut _popped_proc: Option<Proccess>;
     let mut i: usize = 0;
     let quantum: i32 = 2;
     let mut count = 0;
+    let mut proccess_cl_push: usize = 1;
+    let mut check_proccessed = 0;
+    let mut exitloop = 0;
 
-    let mut clone = p.clone();
+    let mut clone: Vec<Proccess> = Vec::new();
+    clone.push(p[i].clone());
 
     for i in &mut *p {
         count += i.execution_time;
     }
 
-    while count != 0 {
+    while count != 0 || proccess_cl_push == 5 {
         println!("{count} times //  {response} \n");
-        println!("Process Name\tEntry Time\tProccess Time\tAwait Time\tTurnaround Time\n");
-        for val in &clone {
-            println!(
-                "{}\t{: >10}\t{: >10}\t{: >10}\t{: >10}\n",
-                val.name, val.entry_time, val.execution_time, val.await_time, val.turnaround_time
-            );
-        }
-        if response >= clone[i].entry_time && !clone[i].proccessed {
-            if clone[i].execution_time >= quantum {
-                clone[i].execution_time -= quantum;
-                clone[i].turnaround_time = response + quantum;
+        if !clone[0].proccessed {
+            println!("Process Name\tEntry Time\tProccess Time\tAwait Time\tTurnaround Time\n");
+            for val in &clone {
+                println!(
+                    "{}\t{: >10}\t{: >10}\t{: >10}\t{: >10}\n",
+                    val.name,
+                    val.entry_time,
+                    val.execution_time,
+                    val.await_time,
+                    val.turnaround_time
+                );
+            }
+            if clone[0].execution_time >= quantum {
+                clone[0].execution_time -= quantum;
+                clone[0].turnaround_time = response + quantum;
                 count -= quantum;
                 response += quantum;
-            } else if clone[i].execution_time == 1 {
-                clone[i].execution_time -= 1;
-                clone[i].turnaround_time = response + 1;
+            } else if clone[0].execution_time == 1 {
+                clone[0].execution_time -= 1;
+                clone[0].turnaround_time = response + 1;
                 count -= 1;
                 response += 1;
             }
-            if clone[i].execution_time == 0 {
-                clone[i].await_time = response - clone[i].entry_time - p[i].execution_time;
-                clone[i].proccessed = true;
+            if clone[0].execution_time == 0 {
+                clone[0].await_time = response - clone[0].entry_time;
+                clone[0].proccessed = true;
+                check_proccessed += 1;
+                _popped_proc = Some(clone.remove(0));
+                clone.push(Option::expect(_popped_proc, "Failed"));
             }
         }
-        i += 1;
-        if i == clone.len() {
-            i = 0;
+        if proccess_cl_push < p.len() {
+            if response >= p[proccess_cl_push].entry_time {
+                clone.push(Proccess::new(
+                    p[proccess_cl_push].name.clone(),
+                    p[proccess_cl_push].entry_time,
+                    p[proccess_cl_push].execution_time,
+                ));
+                proccess_cl_push += 1;
+            }
+        }
+        clone.rotate_left(1);
+        exitloop += 1;
+        if check_proccessed == p.len() || exitloop == 30 {
+            break;
         }
     }
+    entry_time_sort(&mut clone);
 
     i = 0;
     loop {
-        _medium_await_time += clone[i].await_time;
         _medium_return_time += clone[i].turnaround_time;
         p[i].turnaround_time = clone[i].turnaround_time;
-        p[i].await_time = clone[i].await_time;
+        p[i].await_time = clone[i].await_time - p[i].execution_time;
+        _medium_await_time += p[i].await_time;
 
         i += 1;
-        if i == p.len() {
+        if i == clone.len() {
             break;
         }
     }
