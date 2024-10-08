@@ -1,3 +1,4 @@
+#[derive(Clone)]
 pub struct Proccess {
     pub name: String,
     pub entry_time: i32,

@@ -3,7 +3,7 @@
 version = 3
 
 [[package]]
-name = "Scaling_RoundRobin_Rust"
+name = "OS_Scaling_onRust"
 version = "0.1.0"
 dependencies = [
  "fastrand 2.1.1",

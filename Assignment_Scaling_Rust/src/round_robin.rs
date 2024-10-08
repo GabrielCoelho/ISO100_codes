@@ -1,30 +1,7 @@
 // Copyright (c) 2024 Gabriel Coelho Soares. All Rights Reserved.
+use crate::proccess::*;
 use random_string::generate;
 use std::io;
-
-// Structures
-#[derive(Clone)]
-struct Proccess {
-    name: String,
-    entry_time: i32,
-    execution_time: i32,
-    await_time: i32,
-    turnaround_time: i32,
-    proccessed: bool,
-}
-
-impl Proccess {
-    fn new(p_name: String, p_entime: i32, p_exect: i32) -> Self {
-        Proccess {
-            name: p_name,
-            entry_time: p_entime,
-            execution_time: p_exect,
-            await_time: 0,
-            turnaround_time: 0,
-            proccessed: false,
-        }
-    }
-}
 
 enum MENU {
     _OptDesselect = 0,
@@ -35,7 +12,7 @@ enum MENU {
 }
 
 // main
-fn main() {
+pub fn main_rrobin() {
     let mut proc: Vec<Proccess> = Vec::new();
     let mut option: u8 = 0;
     println!("Round Robin Scaling in Rust");
@@ -46,7 +23,7 @@ fn main() {
             2 if 2 == MENU::OptShow as u8 => list_proccesses(&proc),
             3 if 3 == MENU::OptExecute as u8 => execute_proccesses(&mut proc),
             4 if 4 == MENU::OptExit as u8 => {
-                println!("Exiting the program!");
+                println!("Going back to the main menu");
                 break;
             }
             _ => println!("Couldn't find the given option"),
@@ -120,19 +97,7 @@ fn execute_proccesses(p: &mut Vec<Proccess>) {
     }
 
     while count != 0 || proccess_cl_push == 5 {
-        println!("{count} times //  {response} \n");
         if !clone[0].proccessed {
-            println!("Process Name\tEntry Time\tProccess Time\tAwait Time\tTurnaround Time\n");
-            for val in &clone {
-                println!(
-                    "{}\t{: >10}\t{: >10}\t{: >10}\t{: >10}\n",
-                    val.name,
-                    val.entry_time,
-                    val.execution_time,
-                    val.await_time,
-                    val.turnaround_time
-                );
-            }
             if clone[0].execution_time >= quantum {
                 clone[0].execution_time -= quantum;
                 clone[0].turnaround_time = response + quantum;
@@ -178,7 +143,7 @@ fn execute_proccesses(p: &mut Vec<Proccess>) {
         _medium_await_time += p[i].await_time;
 
         i += 1;
-        if i == clone.len() {
+        if i == p.len() {
             break;
         }
     }
