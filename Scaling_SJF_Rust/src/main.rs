@@ -1,6 +1,6 @@
 // Copyright (c) 2024 Gabriel Coelho Soares. All Rights Reserved.
 mod queue;
-use std::{env::temp_dir, io, os::unix::process};
+use std::io;
 
 use queue::*;
 use random_string::generate;
@@ -80,11 +80,6 @@ fn sjf_sort(p: &mut Vec<Proccess>) {
 
 fn entry_time_sort(p: &mut Vec<Proccess>) {
     p.sort_by(|a, b| a.entry_time.cmp(&b.entry_time));
-}
-
-fn entry_time_sort_ret(p: &mut Vec<Proccess>) -> &Proccess {
-    p.sort_by(|a, b| a.entry_time.cmp(&b.entry_time));
-    &p[0]
 }
 
 fn execute_proccesses(p: &mut Vec<Proccess>) {
