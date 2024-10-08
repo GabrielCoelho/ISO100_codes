@@ -1,24 +1,27 @@
 // Copyright (c) 2024 Gabriel Coelho Soares. All Rights Reserved.
-
 use random_string::generate;
 use std::io;
 
+// Structures
+#[derive(Clone)]
 struct Proccess {
     name: String,
-    entry_time: u8,
-    execution_time: u32,
-    await_time: u32,
-    turnaround_time: u32,
+    entry_time: i32,
+    execution_time: i32,
+    await_time: i32,
+    turnaround_time: i32,
+    proccessed: bool,
 }
 
 impl Proccess {
-    fn new(p_name: String, p_entime: u8, p_exect: u32) -> Self {
+    fn new(p_name: String, p_entime: i32, p_exect: i32) -> Self {
         Proccess {
             name: p_name,
             entry_time: p_entime,
             execution_time: p_exect,
             await_time: 0,
             turnaround_time: 0,
+            proccessed: false,
         }
     }
 }
@@ -30,6 +33,8 @@ enum MENU {
     OptExecute = 3,
     OptExit = 4,
 }
+
+// main
 fn main() {
     let mut proc: Vec<Proccess> = Vec::new();
     let mut option: u8 = 0;
@@ -65,10 +70,14 @@ fn menu() -> u8 {
 }
 
 fn add_proccess(p: &mut Vec<Proccess>) {
+    println!("Insert a number to be the Entry Time of the proccess: ");
+    let pentry = get_number();
+    println!("Now insert the Execution time: ");
+    let pexecute = get_number();
     p.push(Proccess::new(
         generate(5, random_string::charsets::ALPHA_LOWER),
-        fastrand::u8(0..20),
-        fastrand::u32(1..10),
+        pentry,
+        pexecute,
     ));
     entry_time_sort(p);
 }
@@ -92,9 +101,92 @@ fn entry_time_sort(p: &mut Vec<Proccess>) {
 }
 
 fn execute_proccesses(p: &mut Vec<Proccess>) {
-    let mut response: u32 = 0;
-    let mut waiting: u32 = 0;
-    let mut _medium_return_time: u32 = 0;
-    let mut _medium_await_time: u32 = 0;
+    let mut response: i32 = 0;
+    let mut waiting: i32 = 0;
+    let mut _medium_return_time: i32 = 0;
+    let mut _medium_await_time: i32 = 0;
     let mut _popped_proc: Option<Proccess>;
+    let mut i: usize = 0;
+    let quantum: i32 = 2;
+    let mut count = 0;
+    let mut total_time: i32 = p[i].entry_time;
+
+    let mut clone = p.clone();
+
+    for i in &mut *p {
+        count += i.execution_time;
+    }
+
+    while count != 0 {
+        println!("{count} times //  {total_time} \n");
+        println!("Process Name\tEntry Time\tProccess Time\tAwait Time\tTurnaround Time\n");
+        for val in &clone {
+            println!(
+                "{}\t{: >10}\t{: >10}\t{: >10}\t{: >10}\n",
+                val.name, val.entry_time, val.execution_time, val.await_time, val.turnaround_time
+            );
+        }
+        if total_time >= clone[i].entry_time && !clone[i].proccessed {
+            if clone[i].execution_time >= quantum {
+                clone[i].execution_time -= quantum;
+                clone[i].turnaround_time = response + quantum;
+                count -= quantum;
+                response += quantum;
+            } else if clone[i].execution_time == 1 {
+                clone[i].execution_time -= 1;
+                clone[i].turnaround_time = response + 1;
+                count -= 1;
+                response += 1;
+            }
+            total_time += response;
+            if clone[i].execution_time == 0 {
+                clone[i].await_time = total_time - clone[i].entry_time - p[i].execution_time;
+                clone[i].proccessed = true;
+            }
+        }
+        i += 1;
+        if i == clone.len() {
+            i = 0;
+        }
+    }
+
+    i = 0;
+    loop {
+        _medium_await_time += clone[i].await_time;
+        _medium_return_time += clone[i].turnaround_time;
+        p[i].turnaround_time = clone[i].turnaround_time;
+        p[i].await_time = clone[i].await_time;
+
+        i += 1;
+        if i == p.len() {
+            break;
+        }
+    }
+
+    list_proccesses(&p);
+    println!(
+        "Await: {}\tResponse: {}\n",
+        _medium_await_time, _medium_return_time
+    );
+    println!(
+        "Medium Return Time: {:.4}",
+        (_medium_return_time as f32 / (p.len()) as f32) as f32
+    );
+    println!(
+        "Medium Await Time: {:.4}",
+        (_medium_await_time as f32 / (p.len()) as f32) as f32
+    );
+    while !p.is_empty() {
+        _popped_proc = p.pop();
+    }
+}
+
+fn get_number() -> i32 {
+    let mut num: String = String::new();
+    io::stdin()
+        .read_line(&mut num)
+        .expect("Couldn't read a number");
+    let num: i32 = num.trim().parse().expect("Error while parsing");
+
+    num
 }
