@@ -143,7 +143,7 @@ pub fn execute_proccesses(p: &mut Vec<Proccess>) {
         count += i.execution_time;
     }
 
-    while count != 0 || check_proccessed == p.len() {
+    while count != 0 || proccess_cl_push == p.len() {
         if !clone[0].proccessed {
             if clone[0].execution_time >= quantum {
                 clone[0].execution_time -= quantum;
@@ -175,8 +175,13 @@ pub fn execute_proccesses(p: &mut Vec<Proccess>) {
             }
         }
         clone.rotate_left(1);
+        if check_proccessed == p.len() {
+            break;
+        }
     }
     entry_time_sort(&mut clone);
+
+    i = 0;
     loop {
         _medium_return_time += clone[i].turnaround_time;
         p[i].turnaround_time = clone[i].turnaround_time;
@@ -207,12 +212,6 @@ pub fn execute_proccesses(p: &mut Vec<Proccess>) {
     }
 }
 
-/// Armazenar número do input
-///
-/// Retorna um valor inteiro de 32bits a partir do valor inserido pelo usuário. A princípio começa
-/// como String, e mudamos o valor para inteiro.
-///
-/// * num: String -> i32 via .parse();
 pub fn get_number() -> i32 {
     let mut num: String = String::new();
     io::stdin()
