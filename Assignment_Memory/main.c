@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 struct Mem {
   int value;
@@ -12,13 +13,20 @@ struct Mem {
 struct Mem *start = NULL;
 struct Mem *end = NULL;
 struct Mem *aux;
+int reference = 0;
 
 int menu();
 void push(int number);
 bool pop(int *number);
 bool reference_parser(char *ref);
 
-int main(int argc, char *argv[]) { return EXIT_SUCCESS; }
+int main(int argc, char *argv[]) {
+  char a[100] = "36578";
+  if (!reference_parser(a)) {
+    printf("Erro!");
+  }
+  return EXIT_SUCCESS;
+}
 
 int menu() {
   int op = 0;
@@ -40,6 +48,7 @@ void push(int number) {
     end->next = new_item;
     end = new_item;
   }
+  reference += 1;
   printf("%d Inserted at the queue\n", new_item->value);
 }
 
@@ -55,4 +64,12 @@ bool pop(int *number) {
   return true;
 }
 
-bool reference_parser(char *ref) {}
+bool reference_parser(char *ref) {
+  for (int i = 0; i < strlen(ref); i++) {
+    push(ref[i] - '0');
+  }
+  if (reference == strlen(ref)) {
+    return true;
+  }
+  return false;
+}
