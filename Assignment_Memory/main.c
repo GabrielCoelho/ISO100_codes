@@ -5,6 +5,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+enum {
+  OPT_DESSELECT,
+  OPT_FIFO,
+  OPT_OPT,
+  OPT_EXIT,
+};
+
 struct Mem {
   int value;
   struct Mem *next;
@@ -19,20 +26,55 @@ int menu();
 void push(int number);
 bool pop(int *number);
 bool reference_parser(char *ref);
+void fifo(int max);
+void optimal(int max);
+void terminator();
 
 int main(int argc, char *argv[]) {
-  char a[100] = "36578";
-  if (!reference_parser(a)) {
-    printf("Erro!");
+  system("clear");
+  int option = OPT_DESSELECT;
+  int max_page;
+  char ref[30];
+  while (option != OPT_EXIT) {
+    option = menu();
+    switch (option) {
+      case OPT_FIFO:
+        printf("Insert a reference: ");
+        scanf("%s", ref);
+        if (!reference_parser(ref)) {
+          printf("Error while parsing!");
+          return EXIT_FAILURE;
+        }
+        printf("Insert a page max number: ");
+        scanf("%d", &max_page);
+        fifo(max_page);
+        break;
+      case OPT_OPT:
+        printf("Insert a reference: ");
+        scanf("%s", ref);
+        if (!reference_parser(ref)) {
+          printf("Error while parsing!");
+          return EXIT_FAILURE;
+        }
+        printf("Insert a page max number: ");
+        scanf("%d", &max_page);
+        optimal(max_page);
+        break;
+      case OPT_EXIT:
+        printf("Exiting...");
+        terminator();
+        break;
+    }
   }
+
   return EXIT_SUCCESS;
 }
 
 int menu() {
   int op = 0;
-  printf("Memory Pagination");
-  printf("\nChoose an option:\n\n");
-  printf("1. FIFO\t2. Optimal\n");
+  printf("Memory Pagination\n\n");
+  printf("%d. FIFO\t%d. Optimal\n%d. Exit", OPT_FIFO, OPT_OPT, OPT_EXIT);
+  printf("\nChoose an option: ");
   scanf("%d", &op);
   return op;
 }
@@ -49,12 +91,12 @@ void push(int number) {
     end = new_item;
   }
   reference += 1;
-  printf("%d Inserted at the queue\n", new_item->value);
+  // printf("%d Inserted at the queue\n", new_item->value);
 }
 
 bool pop(int *number) {
   if (start == NULL) {
-    printf("Empty Queue\n");
+    /*printf("Empty Queue\n");*/
     return false;
   }
   aux = start;
@@ -72,4 +114,35 @@ bool reference_parser(char *ref) {
     return true;
   }
   return false;
+}
+
+void fifo(int max) {
+  int *memo = malloc(sizeof(int) * max);
+  max = max - 1;
+  int controller = 0;
+  aux = start;
+  for (int i = 0; i < reference; i++) {
+    pop(&controller);
+    printf("%d ", controller);
+  }
+  for (int i = 0; i < max; i++) {
+    if (i == max && i < reference) {
+      printf("\n");
+      i = 0;
+    }
+    if (i >= reference) break;
+  }
+
+  free(memo);
+}
+
+void optimal(int max) {}
+
+void terminator() {
+  int not;
+  if (reference > 0) {
+    for (int i = 0; i < reference; i++) {
+      pop(&not);
+    }
+  }
 }
